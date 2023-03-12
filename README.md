@@ -1,0 +1,2 @@
+# indicadores
+Postulación para SOLUTORIA
