@@ -3,9 +3,6 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
-use App\Libraries\DataTableLib;
-use CodeIgniter\API\ResponseTrait;
-
 
 class Import extends BaseController
 {
@@ -17,6 +14,43 @@ class Import extends BaseController
 
   public function index()
   {
-    return "Import Data";
+    
+    $csv = $this->request->getPost('csv');
+
+    file_put_contents('assets/csv/indicadores.csv', $csv);
+
+    console.log("Datos guardados correctamente");
+
+    $this->importar();
+
+  }
+
+  public function importar()
+  {
+    
+    $model = new \App\Models\IndicadorModel();
+
+    $file = fopen('assets/csv/indicadores.csv', 'r');
+
+    $data = [];
+
+    while (($row = fgetcsv($file)) !== false) 
+    {
+      $data[] = [
+        'nombreIndicador' => $row[0],
+        'codigoIndicador' => $row[1],
+        'unidadMedidaIndicador' => $row[2],
+        'valorIndicador' => $row[3],
+        'fechaIndicador' => $row[4]
+      ];
+    }
+
+    fclose($file);
+
+    if ($model->insertBatch($data)) {
+      console.log("Datos importados correctamente");
+    return;
+
+    }
   }
 }

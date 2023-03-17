@@ -25,6 +25,7 @@ class Filters extends BaseConfig
         'tokens'        => \CodeIgniter\Shield\Filters\TokenAuth::class,
         'chain'         => \CodeIgniter\Shield\Filters\ChainAuth::class,
         'auth-rates'    => \CodeIgniter\Shield\Filters\AuthRates::class,
+        'cors'          => \Fluent\Cors\Filters\CorsFilter::class,
     ];
 
     /**
@@ -37,6 +38,10 @@ class Filters extends BaseConfig
             // 'csrf',
             // 'invalidchars',
             'session' => ['except' => ['login*', 'register', 'auth/a/*']],
+            'cors' => [
+                'before' => ['admin/*'],
+                'after' => ['admin/*']
+            ],
         ],
         'after' => [
             'toolbar',
@@ -70,6 +75,6 @@ class Filters extends BaseConfig
             'before' => [
                 'login*', 'register', 'auth/*'
             ]
-        ]
+        ],
     ];
 }

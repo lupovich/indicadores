@@ -41,4 +41,10 @@ class IndicadorModel extends Model
     protected $skipValidation       = false;
     protected $cleanValidationRules = true;
 
+    public function insertBatch($data)
+    {
+        // Inserta un array de datos en la tabla usando el método insertBatch() de la clase Model
+        return $this->insertBatch($data);
+    }
+
 }
