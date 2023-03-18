@@ -22,24 +22,6 @@ class Indicador extends BaseController
 
     public function list()
     {
-        /*$data = json_decode('
-        {
-          "draw": 1,
-          "recordsTotal": 57,
-          "recordsFiltered": 57,
-          "data": [
-            {
-              "id": "876",
-              "nombreIndicador": "Satou",
-              "codigoIndicador": "Accountant",
-              "unidadMedidaIndicador": "Tokyo",
-              "valorIndicador": "$162,700",
-              "fechaIndicador": "28th Nov 08"
-            }]
-        }');*/ 
-    
-        $order = $this->request->getVar('order');
-        $order = array_shift($order);
         
         $model = model('IndicadorModel');
 
@@ -51,6 +33,8 @@ class Indicador extends BaseController
 
         //http://localhost:8080/admin/importar?draw=1&length=10&start=0&order%5B0%5D%5Bcolumn%5D=0&order%5B0%5D%5Bdir%5D=asc
 
+        $order = $this->request->getVar('order');
+        $order = array_shift($order);
 
         $response = $customDataTable->getResponse([
             'draw' => $this->request->getVar('draw'),

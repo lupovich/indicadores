@@ -56,9 +56,11 @@ class DataTableLib
 
     private function applyFilters(string $match)
     {
+        $this->model->groupStart();
         foreach ($this->columns as $column) {
             $this->model->orLike($column, $match);
         }
+        $this->model->groupEnd();
     }
 
     private function getColumn($index)
