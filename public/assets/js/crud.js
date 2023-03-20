@@ -1,37 +1,76 @@
+var action;
+var id;
+$('#indicadoresForm').on('submit', function(e) 
+    {
+        e.preventDefault(); 
+        //console.log("Ok")
+        if (action == null && id == null) {
+          action = 'guardar';
+        }
+        crud(action, id);
+    }
+);
 function crud(action, id) {
-    if (action == 'ver' || action == 'editar') {
+    if (action == 'editar') {
         $.ajax({
-            url: 'indicador/get/' + id,
+            url: '././indicador/' + id,
             type: 'GET',
             dataType: 'json',
-            success: function(data) {
+            headers: {'X-Requested-With': 'XMLHttpRequest'},
+            success: function(data) 
+            {
                 $('#nombreIndicador').val(data.nombreIndicador);
                 $('#codigoIndicador').val(data.codigoIndicador);
                 $('#unidadMedidaIndicador').val(data.unidadMedidaIndicador);
                 $('#valorIndicador').val(data.valorIndicador);
-                $('#fechaIndicador').val(data.fechaIndicador);
-
-                if (action == 'ver') {
-                    // Deshabilitar los campos del formulario
-                    $('input').prop('disabled', true);
-                    // Cambiar el texto del botón a Actualizar
-                    $('button[type="submit"]').text('Actualizar');
-                } else {
-                    // Habilitar los campos del formulario
-                    $('input').prop('disabled', false);
-                    // Cambiar el texto del botón a Guardar
-                    $('button[type="submit"]').text('Guardar');
+                var fechaString = data.fechaIndicador; 
+                var fecha = Date.parse(fechaString); 
+                if (!isNaN(fecha)) 
+                { 
+                    var fechaDate = new Date(fecha); 
+                    var fechaFormateada = fechaDate.toISOString().split('T')[0]; 
+                    $('#fechaIndicador').val(fechaFormateada); 
                 }
             },
             error: function(xhr, status, error) {
-                alert(xhr.responseText);
+                console.log(xhr.responseText);
             }
+        });
+
+    } else if (action == 'guardar') {
+        // Obtener los valores de los campos del formulario
+        var nombre = $('#nombreIndicador').val();
+        var codigo = $('#codigoIndicador').val();
+        var unidad = $('#unidadMedidaIndicador').val();
+        var valor = $('#valorIndicador').val();
+        var fecha = $('#fechaIndicador').val();
+        var data = {
+          nombreIndicador: nombre,
+          codigoIndicador: codigo,
+          unidadMedidaIndicador: unidad,
+          valorIndicador: valor,
+          fechaIndicador: fecha
+        };
+        $.ajax({
+          url: '././indicador',
+          type: 'POST', 
+          data: data,
+          dataType: 'json',
+          headers: {'X-Requested-With': 'XMLHttpRequest'},
+          success: function(response) {
+            alert('Datos guardados correctamente');
+            location.reload();
+          },
+          error: function(xhr, status, error) {
+            console.log(xhr.responseText);
+        }
         });
     } else if (action == 'eliminar') {
         $.ajax({
-            url: 'indicador/delete/' + id,
-            type: 'POST',
+            url: '././indicador/' + id,
+            type: 'DELETE',
             dataType: 'json',
+            headers: {'X-Requested-With': 'XMLHttpRequest'},
             beforeSend: function() {
                 var result = confirm("¿Estás seguro que quieres eliminar este registro?");
                 if (result) {
@@ -40,15 +79,13 @@ function crud(action, id) {
                     return false;
                 }
             },
-            success: function(data) {
-                // Mostrar un mensaje de éxito al usuario
+            success: function(data) 
+            {
                 alert("El registro se ha eliminado correctamente");
-                // Recargar la tabla para reflejar los cambios
                 location.reload();
             },
             error: function(xhr, status, error) {
-                 // Mostrar el mensaje de error que viene del servidor
-                 alert(xhr.responseText);
+                 console.log(xhr.responseText);
              }
          });
      }

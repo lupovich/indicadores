@@ -5,15 +5,13 @@ namespace App\Controllers\Admin;
 use App\Controllers\BaseController;
 use App\Libraries\DataTableLib;
 use CodeIgniter\API\ResponseTrait;
+use App\Models\IndicadorModel;
 
 class Indicador extends BaseController
 {
 
     use ResponseTrait;
-
-    protected $modelName = 'App\Models\IndicadorModel';
     protected $format    = 'json';
-
 
     public function index()
     {
@@ -24,16 +22,15 @@ class Indicador extends BaseController
     {
         
         $model = model('IndicadorModel');
-
+        
         $columns = [
             'id', 'nombreIndicador', 'codigoIndicador', 'unidadMedidaIndicador', 'valorIndicador', 'fechaIndicador'
         ];
-
+        
         $customDataTable = new DataTableLib($model, 'group', $columns);
-
-        //http://localhost:8080/admin/importar?draw=1&length=10&start=0&order%5B0%5D%5Bcolumn%5D=0&order%5B0%5D%5Bdir%5D=asc
-
+        
         $order = $this->request->getVar('order');
+        
         $order = array_shift($order);
 
         $response = $customDataTable->getResponse([
@@ -49,35 +46,53 @@ class Indicador extends BaseController
 
     }
 
-    public function create()
-    {
-        return "Create";
-    }
-
-    public function store()
-    {
-        return "Store";
-    }
-
     public function show($id)
     {
-        return "$id";
+        $model = new IndicadorModel();
+        $indicador = $model->where('id', $id)->first();
+
+        if ($indicador) 
+        {            
+            return $this->respond($indicador, 200);
+
+        } else {
+            return $this->respond(['error' => 'No se encontró ningún indicador con ese id.'.$id], 404);
+        }        
     }
 
-    public function edit($id)
+    public function create()
     {
-        return "$id";
+        $model = new IndicadorModel();
+        $data = [
+            'nombreIndicador' => $this->request->getVar('nombreIndicador'),
+            'codigoIndicador'  => $this->request->getVar('codigoIndicador'),
+            'unidadMedidaIndicador'  => $this->request->getVar('unidadMedidaIndicador'),
+            'valorIndicador'  => $this->request->getVar('valorIndicador'),
+            'fechaIndicador'  => $this->request->getVar('fechaIndicador'),
+        ];
+        $indicador = $model->save($data); //Guarda o actualiza el indicador seleccionado
+        
+        if ($indicador) 
+        {
+            return $this->respond(['success' => 'El indicador se ha guardado correctamente'], 200);
+
+        } else {
+            return $this->respond(['error' => 'No se ha guardado el indicador'], 404);
+        }
     }
 
-    public function update($id)
+    public function delete($id)
     {
-        return "$id";
-    }
+        $model = new IndicadorModel();
+        $indicador = $model->where('id', $id)->delete($id);
 
-    public function destroy($id)
-    {
-        return "$id";
-    }
+        if ($indicador) 
+        {
+            return $this->respond(['success' => 'El indicador se ha eliminado correctamente'], 200);
 
+        } else {
+            return $this->respond(['error' => 'No se encontró ningún indicador con ese id.'.$id], 404);
+        }
+    }
     
 }

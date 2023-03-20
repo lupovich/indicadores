@@ -1,5 +1,7 @@
-$(document).ready(function () {
-    $('#indicadores').DataTable({
+$(document).ready(function () 
+{
+    $('#indicadores').DataTable(
+        {
         processing: true,
         serverSide: true,
         ajax: '././indicadores',
@@ -12,13 +14,22 @@ $(document).ready(function () {
             { data: 'fechaIndicador', defaultContent: '' },
             { 
                 data: null,
-                render: function(data) {
-                    var ver = '<button class="btn btn-info" data-id="' + data.id + '" data-action="ver">Ver</button>';
-                    var editar = '<button class="btn btn-warning" data-id="' + data.id + '" data-action="editar">Editar</button>';
-                    var eliminar = '<button class="btn btn-danger" data-id="' + data.id + '" data-action="eliminar">Eliminar</button>';
-                    return ver + editar + eliminar;
+                render: function(data) 
+                {
+                    var editar = '<button class="btn btn-info btn-sm" id="editar" data-id="' + data.id + '" data-action="editar"><i class="bi bi-pencil-square"></i></button>';
+                    var eliminar = '<button class="btn btn-warning btn-sm" id="eliminar" data-id="' + data.id + '" data-action="eliminar"><i class="bi bi-trash"></i></button>';
+                    return editar + eliminar;
                 }
             }
         ],
     });
+    $('#indicadores').on('click', 'button', function() 
+    {
+        var id = $(this).attr('data-id');
+        var action = $(this).attr('data-action');
+        //console.log(action + id);
+        crud(action, id);
+    });
 });
+
+

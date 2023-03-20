@@ -35,6 +35,7 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], function($rout
 {
     $routes->get('importar', 'Import::index');
 
+    
     $routes->get('indicadores', 'Indicador::list');
     
     $routes->resource('indicador');
