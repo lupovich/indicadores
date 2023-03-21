@@ -34,9 +34,10 @@ $routes->get('/', 'Home::index');
 $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], function($routes)
 {
     $routes->get('importar', 'Import::index');
-
     
     $routes->get('indicadores', 'Indicador::list');
+    
+    $routes->get('reporte/(:any)/(:any)', 'Indicador::reporte');
     
     $routes->resource('indicador');
 });

@@ -2,10 +2,10 @@
 
 namespace App\Controllers\Admin;
 
-use App\Controllers\BaseController;
+use App\Models\IndicadorModel;
 use App\Libraries\DataTableLib;
 use CodeIgniter\API\ResponseTrait;
-use App\Models\IndicadorModel;
+use App\Controllers\BaseController;
 
 class Indicador extends BaseController
 {
@@ -15,7 +15,20 @@ class Indicador extends BaseController
 
     public function index()
     {
-        return view('dashboard');
+        $model = new IndicadorModel();
+
+        $fecha_minima = $model->getFechaMinima();
+        $fecha_maxima = $model->getFechaMaxima();
+
+        $fechas = [ 
+            'fecha_minima' => $fecha_minima, 
+            'fecha_maxima' => $fecha_maxima 
+        ]; 
+        
+        //var_dump($fechas);
+
+        return view('dashboard', $fechas);
+        
     }
 
     public function list()
@@ -94,5 +107,22 @@ class Indicador extends BaseController
             return $this->respond(['error' => 'No se encontró ningún indicador con ese id.'.$id], 404);
         }
     }
-    
+
+    public function reporte()
+    {
+        $desde = $this->request->uri->getSegment(3); 
+        $hasta = $this->request->uri->getSegment(4);   
+        
+        $model = new IndicadorModel();
+        
+        $reporte = $model->getReport($desde, $hasta);
+        
+        //var_dump($reporte);
+
+        if ($reporte) 
+        {
+            return $this->response->setJSON($reporte);
+        }
+    }
+
 }
